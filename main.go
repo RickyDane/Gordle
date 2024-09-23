@@ -1,11 +1,12 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func serve(w http.ResponseWriter, r *http.Request) {
@@ -27,27 +28,27 @@ func root(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllGermanWords() []byte {
-	body, err := os.ReadFile("assets/wordlist-german.txt")
-	if err != nil {
-		fmt.Println(err)
-	}
-	return body
-}
-
-func formatJSON(data []byte) string {
-	var out bytes.Buffer
-	err := json.Indent(&out, data, "", " ")
+	readFile, err := os.Open("assets/wordlist-german.txt")
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	d := out.Bytes()
-	return string(d)
-}
+	fileScanner := bufio.NewScanner(readFile)
+	fileScanner.Split(bufio.ScanLines)
+	var fileLines []string
 
-type Hello struct {
-	Message string `json:"message"`
+	for fileScanner.Scan() {
+		text := fileScanner.Text()
+		if len(text) == 5 && !strings.Contains(text, "ä") && !strings.Contains(text, "ö") && !strings.Contains(text, "ü") {
+			fileLines = append(fileLines, fileScanner.Text())
+		}
+	}
+
+	readFile.Close()
+
+	jsonVal, _ := json.Marshal(fileLines)
+	return jsonVal
 }
 
 func main() {

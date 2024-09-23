@@ -10,10 +10,10 @@ let allWords = [];
 // Spielfeld initialisieren
 async function initBoard() {
     // Alle Wörter laden
-    allWords = (await fetch("/getAllGermanWords").then(response => response.text())).split("\n").map(word => word.toLowerCase());
+    console.time("boardCreated");
     console.time("allWordsLoaded");
+    allWords = (await fetch("/getAllGermanWords").then(response => response.json())).map(word => word.toLowerCase());
     console.timeEnd("allWordsLoaded");
-    console.log(allWords);
     // 6 Reihen, 5 Spalten
     for (let i = 0; i < 40; i++) {
         const tile = document.createElement('div');
@@ -21,7 +21,6 @@ async function initBoard() {
         tile.setAttribute('id', `tile-${i}`);
         board.appendChild(tile);
     }
-    console.time("boardCreated");
     while (answerWord?.length != 5 || answerWord?.includes("ä") || answerWord?.includes("ö") || answerWord?.includes("ü")) {
         answerWord = allWords[Math.floor(Math.random() * allWords.length)];
     }
