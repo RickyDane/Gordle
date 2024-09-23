@@ -9,11 +9,8 @@ let allWords = [];
 
 // Spielfeld initialisieren
 async function initBoard() {
-    // Alle Wörter laden
-    console.time("boardCreated");
-    console.time("allWordsLoaded");
-    allWords = (await fetch("/getAllGermanWords").then(response => response.json())).map(word => word.toLowerCase());
-    console.timeEnd("allWordsLoaded");
+    answerWord = await fetch("/getRandomWord").then(response => response.text());
+    console.log(answerWord);
     // 6 Reihen, 5 Spalten
     for (let i = 0; i < 40; i++) {
         const tile = document.createElement('div');
@@ -21,10 +18,7 @@ async function initBoard() {
         tile.setAttribute('id', `tile-${i}`);
         board.appendChild(tile);
     }
-    while (answerWord?.length != 5 || answerWord?.includes("ä") || answerWord?.includes("ö") || answerWord?.includes("ü")) {
-        answerWord = allWords[Math.floor(Math.random() * allWords.length)];
-    }
-    console.timeEnd("boardCreated");
+
 }
 
 // Eingabe von Tasten
@@ -74,9 +68,11 @@ function deleteLetter() {
 }
 
 // Rateversuch überprüfen
-function submitGuess() {
+async function submitGuess() {
     if (guess.length === 5) {
-        if (!allWords.includes(guess.toLowerCase())) {
+        let formdata = new FormData();
+        formdata.append("guess", guess);
+        if (!await fetch("/checkIfWordIsInList", { method: "POST", body: guess }).then(response => response.json())) {
             alert("Das Wort ist ungültig.");
             return;
         }
