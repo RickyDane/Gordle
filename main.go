@@ -66,5 +66,6 @@ func main() {
 	readFile.Close()
 
 	http.HandleFunc("/", serve)
+	print("*Listening now on port :80")
 	http.ListenAndServe("", nil)
 }
