@@ -20,7 +20,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "main.js")
 	case "/checkIfWordIsInList":
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(fmt.Sprintf(`{"result": %t}`, checkIfWordIsInList(r.FormValue("guess")))))
+		w.Write([]byte(fmt.Sprintf("%t", checkIfWordIsInList(r.FormValue("guess")))))
 	case "/getRandomWord":
 		w.Write([]byte(getRandomWord()))
 	}
@@ -34,9 +34,11 @@ func checkIfWordIsInList(guess string) bool {
 	print("Checking if ", guess, " is in list\n")
 	for _, word := range allWords {
 		if guess == strings.ToLower(word) {
+			print("The word ", guess, " is in the list\n")
 			return true
 		}
 	}
+	print("The word ", guess, " is not in the list\n")
 	return false
 }
 
