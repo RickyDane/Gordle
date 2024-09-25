@@ -69,5 +69,5 @@ func main() {
 
 	http.HandleFunc("/", serve)
 	print("*Listening now on port :80\n")
-	http.ListenAndServe("", nil)
+	http.ListenAndServe("127.0.0.1:80", nil)
 }
