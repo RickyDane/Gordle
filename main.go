@@ -68,6 +68,6 @@ func main() {
 	readFile.Close()
 
 	http.HandleFunc("/", serve)
-	print("*Listening now on port :80\n")
-	http.ListenAndServe("127.0.0.1:80", nil)
+	print("*Listening now on port :443\n")
+	http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)
 }
